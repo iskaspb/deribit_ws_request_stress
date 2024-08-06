@@ -13,7 +13,7 @@ The difference from the original implementation - this tool repeats subscription
 There is an option to do it with or without rate limiter.
 
 ## How to run
-Please edit the dbt-ws-authenticated-example.py file and set `client_id` and `client_secret` variable.
+Please edit the dbt-ws-authenticated-example.py file and set `client_id` and `client_secret` variable (with the values that you received from your Deribit testnet account).
 
 ... assuming you already have python3 env ...
 ```
@@ -21,7 +21,7 @@ $ pip3 install websockets # install dependency
 $ python3 ./dbt-ws-authenticated-example.py
 ...
 ```
-
+## Result without rate limiter
 Typical output for the run without rate limiter (i.e. `rate_limit_request_per_sec=0`) - you can see "broken websocket" after 20-30 requests:
 ```
 2024-08-06 21:48:31 | INFO | No rate limit set
@@ -50,6 +50,7 @@ Typical output for the run without rate limiter (i.e. `rate_limit_request_per_se
 2024-08-06 21:48:33 | INFO | WebSocket connection has broken.
 ```
 
+## Result with rate limiter
 And similar run but with rate limiter (i.e. `rate_limit_request_per_sec=5`) - this time you can see that all requests were sent successfully:
 ```
 $ python3 ./dbt-ws-authenticated-example.py 
