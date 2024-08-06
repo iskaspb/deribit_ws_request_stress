@@ -1,7 +1,7 @@
 # Deribit WS Request Stress
 This is an experimental tool that explores Deribit WebSocket request rate limit.
 
-I used the following links and docs:
+Useful links and docs:
 1. https://insights.deribit.com/dev-hub/how-to-maintain-and-authenticate-a-websocket-connection-to-deribit-python/
 2. https://docs.deribit.com/#overview
 3. https://www.deribit.com/kb/deribit-rate-limits
@@ -83,3 +83,47 @@ $ python3 ./dbt-ws-authenticated-example.py
 
 ## Simple Rate Limiter
 I use very naive rate limiter implementation, see `TaskScheduler`. `TaskScheduler` is just a queue of tasks that are delayed by the fixed interval - which is not the best way to implement "credit based" logic of Deribit rate limiter (but it works).
+
+## Better Rate Limiter
+Correct rate limiter should get current limits using API call `https://test.deribit.com/api/v2/private/get_account_summary?currency=BTC&extended=true` (for testnet) :
+```
+...
+    "limits": {
+      "non_matching_engine": {
+        "burst": 100,
+        "rate": 20
+      },
+      "limits_per_currency": false,
+      "matching_engine": {
+        "trading": {
+          "total": {
+            "burst": 20,
+            "rate": 5
+          }
+        },
+        "spot": {
+          "burst": 20,
+          "rate": 5
+        },
+        "maximum_quotes": {
+          "burst": 500,
+          "rate": 500
+        },
+        "maximum_mass_quotes": {
+          "burst": 10,
+          "rate": 10
+        },
+        "guaranteed_mass_quotes": {
+          "burst": 2,
+          "rate": 2
+        },
+        "cancel_all": {
+          "burst": 20,
+          "rate": 5
+        }
+      }
+    },
+...
+```
+
+And treat differently different requests (see https://www.deribit.com/kb/deribit-rate-limits)
